@@ -122,11 +122,11 @@ class Pytypos:
             return sorted(list(set(typo_list_flat)), key=str.casefold)
 
 
-    def find_typos(self) -> dict:
+    def find_typos(self) -> None:
         """Finds typos in target file or directory
 
         Returns:
-            typo_details (dict): details of typos found (returns None if no typos found)
+            None
         """
         typo_details = {}
         for file in self._find_files():
@@ -140,7 +140,7 @@ class Pytypos:
             logging.info('Possible typos found.')
             self.typo_details = typo_details
             self.typo_list = self._get_typos_list()
-            return self.typo_details
+            logging.info('Typos found.')
         else:
             logging.info('No typos were found.')
 
