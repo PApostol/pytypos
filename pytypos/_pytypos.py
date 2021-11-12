@@ -5,6 +5,8 @@ import logging
 import re
 import os
 from itertools import chain
+from typing import List
+
 
 class Pytypos:
     """Pytypos class can be used to identify possible pytypos in source code comments and other text files
@@ -16,29 +18,45 @@ class Pytypos:
         recursive (bool): whether to scan recursively in case `target` is a directory (default: False)
         dictionary (str): language dictionary to use (default: 'en_US')
         suggestions (bool): whether to generate suggestions for any pytypos detected (default: False)
+        exclude_file_list (List): a list of files to exclude from typo checking (default: None)
+        exclude_word_list (List): a list of words to exclude from typo checking (default: None)
+        exclude_word_file (str): path to a text file with words to exclude from typo checking, one word per line (default: None)
 
     Returns:
         Typos: a Pytypos object
 
     Examples:
-        Recursively scan `target` for comments (i.e. "# this is a comment") in Python files
-        `Pytypos(target='/my/path/project/', match_identifier='#', file_extension='py', recursive=True)`
+        Recursively scan "my/path/project/" for comments (i.e. "# this is a comment") in Python files
+        `Pytypos(target='my/path/project/', match_identifier='#', file_extension='py', recursive=True)`
 
-        Recursively scan `target` for any text in RST files and give suggestions
-        `Pytypos(target='/foo/bar/', match_identifier='', file_extension='rst', recursive=True, suggestions=True)`
+        Recursively scan "foo/bar/" for any text in RST files and give suggestions, but skip file "foo/UPDATE.rst" and exclude the words "repos" and "GitHub"
+        `Pytypos(target='foo/bar/', match_identifier='', file_extension='rst', recursive=True, suggestions=True, exclude_file_list=['foo/UPDATE.rst'], exclude_word_list=['repos', 'GitHub'])`
 
-        Scan the `target` Java file for comments (i.e. "// this is a comment") and give suggestions with a french dictionary
-        `Pytypos(target='/a/b/c.java', match_identifier='//', dictionary='fr', suggestions=True)`
+        Scan the "a/b/c.java" Java file for comments (i.e. "// this is a comment") and give suggestions with a french dictionary, but exclude words found in "exclusions.txt"
+        `Pytypos(target='a/b/c.java', match_identifier='//', dictionary='fr', suggestions=True, exclude_word_file='exclusions.txt')`
 
         Note: you can only use dictionaries that you have installed. Pytypos uses dictionaries from PyEnchant: https://pyenchant.github.io/pyenchant/
     """
-    def __init__(self, target: str, match_identifier: str='#', file_extension: str='py', recursive: bool=False, dictionary: str='en_US', suggestions=False) -> None:
+
+    def __init__(self, target: str, match_identifier: str='#', file_extension: str='py', recursive: bool=False, dictionary: str='en_US',
+                 suggestions: bool=False, exclude_file_list: List[str]=None, exclude_word_list: List[str]=None, exclude_word_file: str=None) -> None:
         self.target = target
         self.file_extension = file_extension
         self.re_match = f'{match_identifier}(.+)\n'
         self.recursive = recursive
         self.dictionary = enchant.Dict(dictionary)
         self.suggestions = suggestions
+        self.exclude_files = set(exclude_file_list) if isinstance(exclude_file_list, List) else set()
+        self.exclude_words = set(exclude_word_list) if isinstance(exclude_word_list, List) else set()
+
+        if exclude_word_file and os.path.isfile(exclude_word_file):
+            with codecs.open(exclude_word_file, 'r', encoding='utf-8') as f:
+                words = f.read().splitlines()
+            if words:
+                self.exclude_words |= set([w.strip() for w in words if w])
+        elif exclude_word_file:
+            raise FileNotFoundError(f'No such file or directory: {exclude_word_file}')
+
         self.typo_list = None
         self.typo_details = None
 
@@ -130,17 +148,18 @@ class Pytypos:
         """
         typo_details = {}
         for file in self._find_files():
-            for word in self._match_from_file(file):
-                if word and not self.dictionary.check(word):
-                    if file in typo_details:
-                        typo_details[file].append({word: self.dictionary.suggest(word)} if self.suggestions else word)
-                    else:
-                        typo_details[file] = [{word: self.dictionary.suggest(word)} if self.suggestions else word]
+            if file not in self.exclude_files:
+                for word in self._match_from_file(file):
+                    if word and word not in self.exclude_words and not self.dictionary.check(word):
+                        if file in typo_details:
+                            typo_details[file].append({word: self.dictionary.suggest(word)} if self.suggestions else word)
+                        else:
+                            typo_details[file] = [{word: self.dictionary.suggest(word)} if self.suggestions else word]
         if typo_details:
             logging.info('Possible typos found.')
             self.typo_details = typo_details
             self.typo_list = self._get_typos_list()
-            logging.info('Typos found.')
+            logging.info('Possible typos found.')
         else:
             logging.info('No typos were found.')
 
