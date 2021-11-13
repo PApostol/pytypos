@@ -1,4 +1,4 @@
-"""pytypos module Installation script"""
+"""pytypos module installation script"""
 from setuptools import setup, find_packages
 import os
 
