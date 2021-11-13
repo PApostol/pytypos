@@ -29,10 +29,10 @@ python setup.py install
 For usage details check `help(pytypos)`.
 
 ### Usage Examples
-The below will scan `target` recursively for comments (i.e. `# this is a comment`) in Python files:
+The below will recursively scan `my/path/project/` for comments (i.e. `# this is a comment`) in Python files:
 ```
 from pytypos import Pytypos
-prj = Pytypos(target='/my/path/project/', match_identifier='#', file_extension='py', recursive=True)
+prj = Pytypos(target='my/path/project/', match_identifier='#', file_extension='py', recursive=True)
 prj.find_typos()
 print(prj.typo_list)
 print(prj.typo_details)
@@ -62,11 +62,11 @@ The above can be nicely printed on stdout with Python's built-in [pprint](https:
 
 #### Other Examples
 ```
-# scan a Java file for comments (i.e. "// this is a comment") and give suggestions with a french dictionary
-typos = Pytypos(target='/a/b/c.java', match_identifier='//', dictionary='fr', suggestions=True)
+# recursively scan "foo/bar/" for any text in RST files and give suggestions, but skip file "foo/UPDATE.rst" and exclude the words "repos" and "GitHub"
+Pytypos(target='foo/bar/', match_identifier='', file_extension='rst', recursive=True, suggestions=True, exclude_file_list=['foo/UPDATE.rst'], exclude_word_list=['repos', 'GitHub'])
 
-# recursively scan target for any text in RST files and give suggestions
-typos = Pytypos(target='/foo/bar/', match_identifier='', file_extension='rst', recursive=True, suggestions=True)
+# scan the "a/b/c.java" Java file for comments (i.e. "// this is a comment") and give suggestions with a french dictionary, but exclude words found in "exclusions.txt"
+Pytypos(target='a/b/c.java', match_identifier='//', dictionary='fr', suggestions=True, exclude_word_file='exclusions.txt')
 ```
 
 #### Testing

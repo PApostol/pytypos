@@ -6,4 +6,4 @@ A cool bit of cdoe goes here::
 
    Should be *highlighted* proply.
 
-This is some text.
+This is some RST text on GitHub.

@@ -5,7 +5,7 @@ typos_py = Pytypos(target='tests/resources/pyfile.py', suggestions=True)
 typos_py.find_typos()
 #typos_py.fix_typos()
 
-typos_rst = Pytypos(target='tests/resources/', recursive=True, match_identifier='', file_extension='rst')
+typos_rst = Pytypos(target='tests/resources/', recursive=True, match_identifier='', file_extension='rst', exclude_word_list=['RST'])
 typos_rst.find_typos()
 #typos_rst.fix_typos()
 
