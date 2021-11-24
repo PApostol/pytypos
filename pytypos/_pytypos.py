@@ -5,7 +5,7 @@ import logging
 import re
 import os
 from itertools import chain
-from typing import List
+from typing import List, Dict
 
 
 class Pytypos:
@@ -18,8 +18,8 @@ class Pytypos:
         recursive (bool): whether to scan recursively in case `target` is a directory (default: False)
         dictionary (str): language dictionary to use (default: 'en_US')
         suggestions (bool): whether to generate suggestions for any pytypos detected (default: False)
-        exclude_file_list (List): a list of files to exclude from typo checking (default: None)
-        exclude_word_list (List): a list of words to exclude from typo checking (default: None)
+        exclude_file_list (List[str]): a list of files to exclude from typo checking (default: None)
+        exclude_word_list (List[str]): a list of words to exclude from typo checking (default: None)
         exclude_word_file (str): path to a text file with words to exclude from typo checking, one word per line (default: None)
 
     Returns:
@@ -40,13 +40,13 @@ class Pytypos:
 
     def __init__(self, target: str, match_identifier: str='#', file_extension: str='py', recursive: bool=False, dictionary: str='en_US',
                  suggestions: bool=False, exclude_file_list: List[str]=None, exclude_word_list: List[str]=None, exclude_word_file: str=None) -> None:
-        self.target = target
+        self.target = target.replace(os.path.sep, '/')
         self.file_extension = file_extension
         self.re_match = f'{match_identifier}(.+)\n'
         self.recursive = recursive
         self.dictionary = enchant.Dict(dictionary)
         self.suggestions = suggestions
-        self.exclude_files = set(exclude_file_list) if isinstance(exclude_file_list, List) else set()
+        self.exclude_files = set([f.replace(os.path.sep, '/') for f in exclude_file_list]) if isinstance(exclude_file_list, List) else set()
         self.exclude_words = set(exclude_word_list) if isinstance(exclude_word_list, List) else set()
 
         if exclude_word_file and os.path.isfile(exclude_word_file):
@@ -61,11 +61,11 @@ class Pytypos:
         self.typo_details = None
 
 
-    def add_to_dictionary(self, word_list: list, persistent: bool=True) -> None:
+    def add_to_dictionary(self, word_list: List[str], persistent: bool=True) -> None:
         """Adds custom word list to dictionary
 
         Parameters
-            word_list (list): list of word strings to add to dictionary
+            word_list (List[str]): list of words to add to dictionary
             persistent (bool): whether the word list addition should be persistent or temporary for current session (default: True)
 
         Returns:
@@ -80,11 +80,11 @@ class Pytypos:
         logging.info('Word list added to {0}.'.format('persistent dictionary' if persistent else 'current session'))
 
 
-    def add_to_exclusions(self, word_list: list) -> None:
+    def add_to_exclusions(self, word_list: List[str]) -> None:
         """Removes custom word list from dictionary
 
         Parameters
-            word_list (list): list of word strings to remove from dictionary
+            word_list (List[str]): list of words to remove from dictionary
 
         Returns:
             None
@@ -94,11 +94,11 @@ class Pytypos:
         logging.info('Word list added to exclusions.')
 
 
-    def replace_word(self, word_mappings: dict) -> None:
+    def replace_word(self, word_mappings: Dict[str, str]) -> None:
         """Replaces words in dictionary
 
         Parameters
-            word_mappings (dict): dictionary with keys as words to replace and values as words to replace the keys with
+            word_mappings (Dict[str, str]): dictionary with keys as words to replace and values as words to replace the keys with
 
         Returns:
             None
@@ -108,7 +108,7 @@ class Pytypos:
         logging.info('Word mappings replaced.')
 
 
-    def _match_from_file(self, file: str) -> list:
+    def _match_from_file(self, file: str) -> List[str]:
         with codecs.open(file, 'r', encoding='utf-8') as f:
             content = f.read()
 
@@ -118,18 +118,18 @@ class Pytypos:
         return list(set([word.strip(strip_str) for match in matches for word in match.split() if word.strip(strip_str).isalpha()]))
 
 
-    def _find_files(self) -> list:
+    def _find_files(self) -> List[str]:
         if os.path.isfile(self.target):
             files = [self.target]
         elif os.path.isdir(self.target):
             file_pattern = self.target + ('/**/*.' if self.recursive else '/*.') + self.file_extension
-            files = [file for file in glob.glob(file_pattern, recursive=self.recursive)]
+            files = [f.replace(os.path.sep, '/') for f in glob.glob(file_pattern, recursive=self.recursive)]
         else:
             raise FileNotFoundError(f'No such file or directory: {self.target}')
         return files
 
 
-    def _get_typos_list(self) -> list:
+    def _get_typos_list(self) -> List[str]:
         if self.typo_details:
             if self.suggestions:
                 typo_list = [list(word_dict.keys()) for word_list in self.typo_details.values() for word_dict in word_list]
