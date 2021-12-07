@@ -38,8 +38,10 @@ class Pytypos:
         Note: you can only use dictionaries that you have installed. Pytypos uses dictionaries from PyEnchant: https://pyenchant.github.io/pyenchant/
     """
 
-    def __init__(self, target: str, match_identifier: str='#', file_extension: str='py', recursive: bool=False, dictionary: str='en_US',
-                 suggestions: bool=False, exclude_file_list: List[str]=None, exclude_word_list: List[str]=None, exclude_word_file: str=None) -> None:
+    def __init__(self, target: str, match_identifier: str = '#', file_extension: str = 'py', recursive: bool = False,
+                 dictionary: str = 'en_US', suggestions: bool = False, exclude_file_list: List[str] = None,
+                 exclude_word_list: List[str] = None, exclude_word_file: str = None) -> None:
+
         self.target = target.replace(os.path.sep, '/')
         self.file_extension = file_extension
         self.re_match = f'{match_identifier}(.+)\n'
@@ -61,7 +63,7 @@ class Pytypos:
         self.typo_details = None
 
 
-    def add_to_dictionary(self, word_list: List[str], persistent: bool=True) -> None:
+    def add_to_dictionary(self, word_list: List[str], persistent: bool = True) -> None:
         """Adds custom word list to dictionary
 
         Parameters
