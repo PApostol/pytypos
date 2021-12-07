@@ -1,6 +1,7 @@
 ## Pytypos
 
 [![PyPI version](https://badge.fury.io/py/pytypos.svg)](https://badge.fury.io/py/pytypos)
+[![Downloads](https://static.pepy.tech/personalized-badge/pytypos?period=month&units=international_system&left_color=grey&right_color=yellowgreen&left_text=total%20downloads)](https://pepy.tech/project/pytypos)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pytypos)](https://pypi.org/project/pytypos/)
 [![](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license "Go to license section")
@@ -11,8 +12,9 @@ Pytypos is a typo and spelling checker used to identify spelling mistakes in com
 such as Python, Java, C++, C#, Matlab, and others. In addition, it can check other text-oriented files such as MD, RST, TXT, or similar.
 
 Spell checking uses dictionaries installed on the host computer.
-The dictionary language can be defined in the `Pytypos` object with, for example, `dictionary='de'` for German.
+The dictionary language can be defined in the `Pytypos` object with `dictionary='de'` for German, for instance.
 For installation and management of dictionaries, see the documentation of [pyenchant](https://pyenchant.github.io/pyenchant/).
+To list available dictionary languages on the host system, print `pytypos.available_languages()`.
 
 ### Installation
 The easiest way to install is using `pip`:
