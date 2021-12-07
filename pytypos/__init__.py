@@ -12,5 +12,17 @@ from .__info__ import (
     __url__,
     __bugtrack_url__,
 )
+from typing import List
+import enchant
 
-__all__ = ['Pytypos']
+
+def available_languages() -> List[str]:
+    """Returns a list with the available language dictionaries found on the host system
+
+    Returns:
+        List[str]: available language dictionaries found
+    """
+    return enchant.list_languages()
+
+
+__all__ = ['Pytypos', 'available_languages']
