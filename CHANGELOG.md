@@ -1,6 +1,7 @@
 ### Pytypos
 
-##### 1.1.1 (TBD)
+##### 1.2.0 (2021-12-09)
+- Obtain available dictionary languages with `pytypos.available_languages()`
 - Use consistent path separators where possible
 - Use more generic typing
 
