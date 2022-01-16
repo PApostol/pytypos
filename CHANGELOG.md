@@ -1,7 +1,7 @@
 ### Pytypos
 
 ##### 1.2.1 (2022-01-15)
-- Refactore to comply with `pylint`, `isort` and `mypy` checks
+- Refactor to comply with `pylint`, `isort` and `mypy` checks
 - Minor improvements
 
 ##### 1.2.0 (2021-12-09)
