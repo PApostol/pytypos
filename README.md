@@ -73,11 +73,11 @@ Pytypos(target='a/b/c.java', match_identifier='//', dictionary='fr', suggestions
 
 #### Testing
 
-You can do some simple testing after cloning the repo:
-
-`python tests/run_test.py`
+You can do some simple testing after cloning the repo.
 
 Note any additional requirements for running the tests: `pip install -r tests/requirements.txt`
+
+`python tests/run_integration_test.py`
 
 #### Additional methods
 
