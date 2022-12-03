@@ -42,16 +42,19 @@ class Pytypos:
         Note: you can only use dictionaries that you have installed. Pytypos uses dictionaries from PyEnchant: https://pyenchant.github.io/pyenchant/
     """
 
-    def __init__(self, target: str,
-                 match_identifier: str = '#',
-                 file_extension: str = 'py',
-                 recursive: bool = False,
-                 dictionary: str = 'en_US',
-                 suggestions: bool = False,
-                 exclude_file_list: Optional[List[str]] = None,
-                 exclude_word_list: Optional[List[str]] = None,
-                 exclude_word_file: Optional[str] = None
-                 ) -> None:
+    def __init__(
+        self,
+        *,
+        target: str,
+        match_identifier: str = '#',
+        file_extension: str = 'py',
+        recursive: bool = False,
+        dictionary: str = 'en_US',
+        suggestions: bool = False,
+        exclude_file_list: Optional[List[str]] = None,
+        exclude_word_list: Optional[List[str]] = None,
+        exclude_word_file: Optional[str] = None,
+    ) -> None:
 
         self.target = target.replace(os.path.sep, '/')
         self.file_extension = file_extension
@@ -59,7 +62,11 @@ class Pytypos:
         self.recursive = recursive
         self.dictionary = enchant.Dict(dictionary)
         self.suggestions = suggestions
-        self.exclude_files = set(f.replace(os.path.sep, '/') for f in exclude_file_list) if isinstance(exclude_file_list, List) else set()
+        self.exclude_files = (
+            set(f.replace(os.path.sep, '/') for f in exclude_file_list)
+            if isinstance(exclude_file_list, List)
+            else set()
+        )
         self.exclude_words = set(exclude_word_list) if isinstance(exclude_word_list, List) else set()
 
         if exclude_word_file and os.path.isfile(exclude_word_file):
@@ -72,7 +79,6 @@ class Pytypos:
 
         self.typo_list: List[str] = []
         self.typo_details: Dict[str, Any] = {}
-
 
     def add_to_dictionary(self, word_list: List[str], persistent: bool = True) -> None:
         """Adds custom word list to dictionary
@@ -92,7 +98,6 @@ class Pytypos:
                 self.dictionary.add_to_session(word)
         logging.info('Word list added to %s.', 'persistent dictionary' if persistent else 'current session')
 
-
     def add_to_exclusions(self, word_list: List[str]) -> None:
         """Removes custom word list from dictionary
 
@@ -105,7 +110,6 @@ class Pytypos:
         for word in word_list:
             self.dictionary.remove(word)
         logging.info('Word list added to exclusions.')
-
 
     def replace_word(self, word_mappings: Dict[str, str]) -> None:
         """Replaces words in dictionary
@@ -120,7 +124,6 @@ class Pytypos:
             self.dictionary.store_replacement(old_word, new_word)
         logging.info('Word mappings replaced.')
 
-
     def _match_from_file(self, file: str) -> List[str]:
         with codecs.open(file, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -128,8 +131,9 @@ class Pytypos:
         matches = re.findall(self.re_match, content)
         strip_chars = {'.', ',', ';', '?', '(', ')', '&', '"', "'", '{', '}', '@', '[', ']', '#'}
         strip_str = ''.join(list(strip_chars))
-        return list(set(word.strip(strip_str) for match in matches for word in match.split() if word.strip(strip_str).isalpha()))
-
+        return list(
+            set(word.strip(strip_str) for match in matches for word in match.split() if word.strip(strip_str).isalpha())
+        )
 
     def _find_files(self) -> List[str]:
         if os.path.isfile(self.target):
@@ -141,18 +145,18 @@ class Pytypos:
             raise FileNotFoundError(f'No such file or directory: {self.target}')
         return files
 
-
     def _get_typos_list(self) -> List[str]:
         if self.typo_details:
             if self.suggestions:
-                typo_list = [list(word_dict.keys()) for word_list in self.typo_details.values() for word_dict in word_list]
+                typo_list = [
+                    list(word_dict.keys()) for word_list in self.typo_details.values() for word_dict in word_list
+                ]
             else:
                 typo_list = list(self.typo_details.values())
 
             typo_list_flat = list(chain.from_iterable(typo_list))
             return sorted(list(set(typo_list_flat)), key=str.casefold)
         return []
-
 
     def find_typos(self) -> None:
         """Finds typos in target file or directory
@@ -166,7 +170,9 @@ class Pytypos:
                 for word in self._match_from_file(file):
                     if word and word not in self.exclude_words and not self.dictionary.check(word):
                         if file in typo_details:
-                            typo_details[file].append({word: self.dictionary.suggest(word)} if self.suggestions else word)
+                            typo_details[file].append(
+                                {word: self.dictionary.suggest(word)} if self.suggestions else word
+                            )
                         else:
                             typo_details[file] = [{word: self.dictionary.suggest(word)} if self.suggestions else word]
         if typo_details:
@@ -175,7 +181,6 @@ class Pytypos:
             logging.info('Possible typos found.')
         else:
             logging.info('No typos were found.')
-
 
     def fix_typos(self) -> None:
         """Fixes typos found in-between spaces with the most likely replacement.

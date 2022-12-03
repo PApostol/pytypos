@@ -4,9 +4,17 @@ from typing import List
 
 import enchant
 
-from .__info__ import (__author__, __author_email__, __bugtrack_url__,
-                       __description__, __license__, __maintainer__, __title__,
-                       __url__, __version__)
+from .__info__ import (
+    __author__,
+    __author_email__,
+    __bugtrack_url__,
+    __description__,
+    __license__,
+    __maintainer__,
+    __title__,
+    __url__,
+    __version__,
+)
 from ._pytypos import Pytypos
 
 
