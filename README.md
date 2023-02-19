@@ -35,7 +35,7 @@ For usage details check `help(pytypos)`.
 The below will recursively scan `my/path/project/` for comments (i.e. `# this is a comment`) in Python files:
 ```
 from pytypos import Pytypos
-prj = Pytypos(target='my/path/project/', match_identifier='#', file_extension='py', recursive=True)
+prj = Pytypos(target='my/path/project/', match_identifier='#', file_extension='py', recursive=True, suggestions=False)
 prj.find_typos()
 print(prj.typo_list)
 print(prj.typo_details)
@@ -44,14 +44,14 @@ print(prj.typo_details)
 
 `Pytypos.typo_details` stores a dictionary with the following structure:
 
-If `suggestions = False` (default):
+If `suggestions == False` (default):
 ```
 {'file1': ['typo1', 'typo2'],
  'file2': ['typo1', 'typo2']
 }
 ```
 
-If `suggestions = True`:
+If `suggestions == True`:
 ```
 {'file1': [{'typo1': ['suggestion1a', 'suggestion1b'],
             'typo2': ['suggestion2a', 'suggestion2b']
