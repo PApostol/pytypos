@@ -82,13 +82,13 @@ Note any additional requirements for running the tests: `pip install -r tests/re
 
 #### Additional methods
 
-`Pytypos.fix_typos()`: Fixes typos found in-between spaces with the most likely replacement
+`pytypos.Pytypos.fix_typos()`: Fixes typos found in-between spaces with the most likely replacement
 
-`Pytypos.add_to_dictionary()`: Adds custom word list to dictionary
+`pytypos.Pytypos.add_to_dictionary()`: Adds custom word list to dictionary
 
-`Pytypos.add_to_exclusions()`: Removes custom word list from dictionary
+`pytypos.Pytypos.add_to_exclusions()`: Removes custom word list from dictionary
 
-`Pytypos.replace_word()`: Replaces words in dictionary
+`pytypos.Pytypos.replace_word()`: Replaces words in dictionary
 
 ### License
 
