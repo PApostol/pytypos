@@ -5,7 +5,7 @@ import logging
 import os
 import re
 from itertools import chain
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 import enchant
 
@@ -41,6 +41,8 @@ class Pytypos:
 
         Note: you can only use dictionaries that you have installed. Pytypos uses dictionaries from PyEnchant: https://pyenchant.github.io/pyenchant/
     """
+
+    strip_chars: Set[str] = {'.', ',', ';', '?', '(', ')', '&', '"', "'", '{', '}', '@', '[', ']', '#'}
 
     def __init__(
         self,
@@ -129,8 +131,7 @@ class Pytypos:
             content = f.read()
 
         matches = re.findall(self.re_match, content)
-        strip_chars = {'.', ',', ';', '?', '(', ')', '&', '"', "'", '{', '}', '@', '[', ']', '#'}
-        strip_str = ''.join(list(strip_chars))
+        strip_str = ''.join(list(self.strip_chars))
         return list(
             set(word.strip(strip_str) for match in matches for word in match.split() if word.strip(strip_str).isalpha())
         )
@@ -193,14 +194,14 @@ class Pytypos:
 
         if not self.typo_details:
             logging.info('No typos to fix.')
-        else:
-            for file, typo_list in self.typo_details.items():
-                with codecs.open(file, 'r+', encoding='utf-8') as f:
-                    content = f.read()
-                    f.seek(0)
-                    for entry in typo_list:
-                        for typo, suggestions in entry.items():
-                            content = content.replace(f' {typo} ', f' {suggestions[0]} ')
-                    f.write(content)
-                    f.truncate()
-            logging.info('Typos fixed with the most likely replacement.')
+            return
+        for file, typo_list in self.typo_details.items():
+            with codecs.open(file, 'r+', encoding='utf-8') as f:
+                content = f.read()
+                f.seek(0)
+                for entry in typo_list:
+                    for typo, suggestions in entry.items():
+                        content = content.replace(f' {typo} ', f' {suggestions[0]} ')
+                f.write(content)
+                f.truncate()
+        logging.info('Typos fixed with the most likely replacement.')
