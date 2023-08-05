@@ -1,6 +1,6 @@
 ### Pytypos
 
-#### 1.4.0 (under development)
+#### 1.4.0 (2023-08-05)
 Features
 - Modify strip characters by amending `pytypos.Pytypos.strip_chars` attribute
 
