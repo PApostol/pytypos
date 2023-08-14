@@ -1,0 +1,2 @@
+pyenchant>=3.1.0
+pytest>=7.0.0
