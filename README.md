@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/pytypos.svg)](https://badge.fury.io/py/pytypos)
 [![Downloads](https://static.pepy.tech/personalized-badge/pytypos?period=month&units=international_system&left_color=grey&right_color=yellowgreen&left_text=total%20downloads)](https://pepy.tech/project/pytypos)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/pytypos)](https://pypi.org/project/pytypos/)
-[![](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: blue](https://img.shields.io/badge/code%20style-blue-blue.svg)](https://blue.readthedocs.io/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license "Go to license section")
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/PApostol/spark-submit/issues)
